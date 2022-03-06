@@ -8,7 +8,7 @@ smali2frida.py [DIR] > script.js
 
 If no directory (with smali folders) is passed the current one is used by default.
 
-03-03-2022
+06-03-2022
 Created by Kirlif'
 '''
 
@@ -16,7 +16,6 @@ from os import getcwd, path, scandir
 import re
 
 class Smali2Frida:
-    path_pattern = re.compile(r'\S+?smali(_classes\d+)?(\S+)', re.UNICODE)
     class_pattern = re.compile(r'\.class.+?(\S+?;)', re.UNICODE)
     method_pattern = re.compile(r'\.method.+?(\S+?)\((\S*?)\)(\S+)', re.UNICODE)
     param_pattern = re.compile(r'(\[*L\S+?;|\[+\S|B|C|D|F|I|J|S|Z)', re.UNICODE)
@@ -38,7 +37,7 @@ class Smali2Frida:
         _files = []
         for folder in [entry.path for entry in self.scan(self.root_dir, False) if path.isdir(entry) and path.split(entry)[-1].startswith("smali")]:
             _files += [entry.path for entry in self.scan(folder, True) if path.split(entry)[-1].endswith(".smali")]
-        return sorted(_files, key=lambda p : self.path_pattern.match(p).group(2))
+        return _files
 
     def smali_data(self):
         data = {}
@@ -62,7 +61,7 @@ class Smali2Frida:
                                 p = self.primitives[p] if p in self.primitives else p
                                 method_param += f'\'{p}\', '
                             data[class_name].append((method_name, method_param[:-2], len(find_all)))
-        return {k:data[k] for k in data if data[k]}
+        return {k:data[k] for k in sorted(data) if data[k]}
 
     def frida(self):
         classes =  self.smali_data()
@@ -84,3 +83,4 @@ if __name__ == "__main__":
     from sys import argv
     _dir = argv[-1] if path.isdir(argv[-1]) else getcwd()
     [print(snippet) for snippet in Smali2Frida(_dir).snippets]
+
