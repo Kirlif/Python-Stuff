@@ -11,10 +11,10 @@ Function<k>7654(3 params, 3 registers, 0 symbols):
 	LoadParam           	Reg8:2, UInt8:1
 	LoadConstNull       	Reg8:0
 	JmpFalse            	Addr8:10, Reg8:2 |
-;L0                                          | <-----  BRANCH (;Li)
+;L0                                              | <-----  BRANCH (;Li)
 	LoadParam           	Reg8:1, UInt8:2
 	GetByVal            	Reg8:0, Reg8:1, Reg8:2
-;L0:                                         |  <------ LABEL (;Li:) 
+;L0:                                             |  <------ LABEL (;Li:) 
 	Ret                 	Reg8:0
 EndFunction
 
