@@ -42,7 +42,7 @@ class hbclabel:
     def get_func(self):
         print('- Reading hasm...')
         with open(self.hasm_tmp, 'r') as f:
-            for m in re.finditer(re.compile(r'Function<.*?EndFunction\n', re.S), f.read()):
+            for m in re.finditer(re.compile('Function<.*?EndFunction\n', re.S), f.read()):
                 self.func_list.append(m)
 
     def write_hasm(self):
