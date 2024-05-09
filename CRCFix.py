@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*- 
-""" CRCFix v2.17 by Kirlif' """
+# -*- coding: utf-8 -*-
+""" CRCFix v2.18 by Kirlif' """
 from os import path
 from io import BytesIO
 from sys import exit
@@ -45,8 +45,8 @@ class CRC_Fix:
         elems = {}
         with open(apk, 'rb') as g:
             f = BytesIO(g.read())
-        f.seek(-22, 2)
-        meocd = f.tell()
+        f.seek(0, 2)
+        meocd, central_offset = f.tell(), None
         while f.tell() >= 0:
             if f.read(4) == self.END_OF_CENTRAL_SIG:
                 f.seek(8, 1)
@@ -54,8 +54,10 @@ class CRC_Fix:
                 central_offset = ifb(f.read(4))
                 break
             if meocd - f.tell() > 1 << 16:
-                exit(f'EOCD not found!\n{path.basename(apk)} is damaged or not an APK.\n')
+                break
             f.seek(-5, 1)
+        if central_offset is None:
+            exit(f'\nEOCD not found!\n{path.basename(apk)} is damaged or not an APK.\n')
         f.seek(central_offset)
         while f.tell() < central_offset+size_of_cd:
             if not f.read(4) == self.CENTRAL_HEADER_SIG:
@@ -103,7 +105,7 @@ class CRC_Fix:
     def fix(self):
         root, ext = path.splitext(self.tar)
         self.apk_crc = f'{root}{"" if self.overwrite else "_crc"}{ext}'
-        print('\n\u2728 CRCFix 2.17 by Kirlif\' \u2728\n')
+        print('\n\u2728 CRCFix 2.18 by Kirlif\' \u2728\n')
         with open(self.tar, 'rb') as g:
             f = bytearray(g.read())
         with open(self.apk_crc, 'wb') as g:
@@ -129,7 +131,7 @@ if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser(description='''CRCFix restores files CRC and date/time of a modified APK'''
     , formatter_class=argparse.RawTextHelpFormatter)
-    parser.add_argument('-v','--version', action='version', version='2.17')
+    parser.add_argument('-v','--version', action='version', version='2.18')
     parser.add_argument('source', nargs='+', help='APKs source paths (base first)', type=str)
     parser.add_argument('target', help='APK target path', type=str)
     parser.add_argument('-c', action='store_false',  help='do not restore CRCs')
