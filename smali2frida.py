@@ -79,13 +79,13 @@ class Smali2Frida:
                 
                 # Check if there are no arguments
                 if method[2] == 0:
-                    snippet += f'        console.log("[{klass}.{method[0]}]", "no arg");\n'
+                    snippet += f'        console.log("[{k}.{method[0]}]", "no arg");\n'
                 else:
                     # Print each argument on a new line
                     for j in range(method[2]):
-                        snippet += f'        console.log("[{klass}.{method[0]}]", "arg{j}:", var{j});\n'
+                        snippet += f'        console.log("[{k}.{method[0]}]", "arg{j}:", var{j});\n'
                 
-                snippet += f'        console.log("[{klass}.{method[0]}]", "returned: ", ret);\n'
+                snippet += f'        console.log("[{k}.{method[0]}]", "returned: ", ret);\n'
                 snippet += f'        console.log("----------------------------------------------------------------");\n'
                 snippet += f'        return ret;\n    }};\n'
             snippet += ('})\n')
